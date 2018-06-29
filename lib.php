@@ -1,22 +1,6 @@
 <?php
-// require 'koneksi.php';
-// function phone_format_id($nohp) {
-//   $nohp = str_replace(" ","",$nohp);
-//   $nohp = str_replace("(","",$nohp);
-//   $nohp = str_replace(")","",$nohp);
-//   $nohp = str_replace(".","",$nohp);
-//
-//   if(!preg_match('/[^+0-9]/',trim($nohp))){
-//     if(substr(trim($nohp), 0, 3)=='+62'){ // +62xxxx
-//       $hp = trim($nohp);
-//       } elseif(substr(trim($nohp), 0, 1)=='0'){ // 08xxxx
-//       $hp = '+62'.substr(trim($nohp), 1);
-//     } else {
-//       $hp = 0;
-//     }
-//   } return $hp;
-// }
 
+// debug value of "variable"
 function pr($par){
   echo "<pre>";
     print_r($par);
@@ -24,6 +8,7 @@ function pr($par){
   exit();
 }
 
+// convert "format" of phone number
 function phone_format2($no){
     require 'koneksi.php';
     $no = str_replace(" ","",$no);
@@ -38,49 +23,68 @@ function phone_format2($no){
     $_2digitNo = substr($no,1,2); // 85
 
     $res=[];
-    $res['number']=$no;
-    // $res['country']='unknown';
 
-    $s='SELECT nama,param2,param3 FROM parameter WHERE param1="nomor" ORDER BY  CHAR_LENGTH(param3) DESC';
+    $s='SELECT nama,param2,param3
+        FROM parameter
+        WHERE
+          param1="nomor" AND
+          param4 LIKE "%'.strlen($_1startNo).'%"
+        ORDER BY
+          CHAR_LENGTH(param3) DESC';
     $e=mysqli_query($conn,$s);
     $n=mysqli_num_rows($e);
 
     if($n>0){ // data is exist
       // loop from table : parameter
+      $arr=[];
       while ($r=mysqli_fetch_assoc($e)) {
-        if(strpos($r['param3'],',')!=false){// exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
+        if(strpos($r['param3'],',')==false){// exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
+          if($r['param3']==$_1digitNo){
+            $prefixInter = $r['nama']; // +62
+            $prefixLocal = $r['param3']; // 08
+            $country = $r['param2']; // indonesia
+            break ; // break from "while" loop
+          }
+        } else { // not contain (,) / only 1 digit (ex : indonesia : 8)
           $param3s=explode(',',$r['param3']);
           foreach ($param3s as $param3) {
             if($param3==$_1digitNo || $param3==$_2digitNo){
-              $prefix = $r['nama']; // +91
+              $prefixInter = $r['nama']; // +62
+              $prefixLocal = $r['param3']; // 7,8,90,...
               $country = $r['param2']; // india
-              break;
-            }
+              break 2; // break from "foreach & while" loop
+            } // end of if
           } // end of foreach
-        }else{ // not contain (,) / only 1 digit (ex : indonesia : 8)
-          if($param3==$_1digitNo){
-            $prefix = $r['nama']; // +62
-            $country = $r['param2']; // indonesia
-            break;
-          }
         } // end of else
       } // end of while
 
       // store value to array
       $res=[
-        'number'=>$prefix.$_1startNo,
-        'country'=>is_null($country)?'unknown':$country,
+        'prefixLocal'=>$prefixLocal,
+        'prefixInter'=>$prefixInter,
+        'number'=>$prefixInter.$_1startNo,
+        'country'=>$country,
       ];
-    } // end of if
+    } // end of 'if'
     return $res;
-}
+ } // end of function
+
+ function getNumber($no){
+   $ret = phone_format2($no);
+   return is_null($ret['number'])?'unknown':$ret['number'];
+ }
 
 function getCountry($no){
-  $country = phone_format2($no);
-  return $country['country'];
+  $ret = phone_format2($no);
+  return is_null($ret['country'])?'unknown':$ret['country'];
 }
 
-function getNumber($no){
-  $number = phone_format2($no);
-  return $number['number'];
+function getPrefixInter($no){
+  $ret = phone_format2($no);
+  return is_null($ret['prefixInter'])?'unknown':$ret['prefixInter'];
+}
+
+function getPrefixLocal($no){
+  $ret = phone_format2($no);
+  return is_null($ret['prefixLocal'])?'unknown':$ret['prefixLocal'];
 }
