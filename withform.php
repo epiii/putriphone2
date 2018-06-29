@@ -35,6 +35,11 @@
         </div>
 
         <div class="form-group">
+          <label>digit</label>
+          <input readonly name="digit" type="text" class="form-control" id="digit"  placeholder="digit">
+        </div>
+
+        <div class="form-group">
           <label>Int'l Number (Converted)</label>
           <input readonly name="number_new" type="text" class="form-control" id="number_new"  placeholder="converted">
         </div>
@@ -67,6 +72,7 @@
           console.log(ret);
           $('#number_new').val(ret.number);
           $('#country').val(ret.country);
+          $('#digit').val(ret.digit);
         }, error : function (xhr, status, errorThrown) {
             console.log('['+xhr.status+'] '+errorThrown);
         }

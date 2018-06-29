@@ -24,7 +24,7 @@ function phone_format2($no){
 
     $res=[];
 
-    $s='SELECT nama,param2,param3
+    $s='SELECT nama,param2,param3,param4
         FROM parameter
         WHERE
           param1="nomor" AND
@@ -40,6 +40,7 @@ function phone_format2($no){
       while ($r=mysqli_fetch_assoc($e)) {
         if(strpos($r['param3'],',')==false){// exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
           if($r['param3']==$_1digitNo){
+            $digit = $r['param4']; // +62
             $prefixInter = $r['nama']; // +62
             $prefixLocal = $r['param3']; // 08
             $country = $r['param2']; // indonesia
@@ -49,6 +50,7 @@ function phone_format2($no){
           $param3s=explode(',',$r['param3']);
           foreach ($param3s as $param3) {
             if($param3==$_1digitNo || $param3==$_2digitNo){
+              $digit = $r['param4']; // +62
               $prefixInter = $r['nama']; // +62
               $prefixLocal = $r['param3']; // 7,8,90,...
               $country = $r['param2']; // india
@@ -60,6 +62,7 @@ function phone_format2($no){
 
       // store value to array
       $res=[
+        'digit'=>$digit,
         'prefixLocal'=>$prefixLocal,
         'prefixInter'=>$prefixInter,
         'number'=>$prefixInter.$_1startNo,
@@ -68,6 +71,11 @@ function phone_format2($no){
     } // end of 'if'
     return $res;
  } // end of function
+
+ function getDigit($no){
+   $ret = phone_format2($no);
+   return is_null($ret['digit'])?'unknown':$ret['digit'];
+ }
 
  function getNumber($no){
    $ret = phone_format2($no);
@@ -86,5 +94,5 @@ function getPrefixInter($no){
 
 function getPrefixLocal($no){
   $ret = phone_format2($no);
-  return is_null($ret['prefixLocal'])?'unknown':$ret['prefixLocal'];
+  return is_null($ret['prefixLocal'])?'unknown':'0'.$ret['prefixLocal'];
 }

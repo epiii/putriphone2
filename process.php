@@ -11,6 +11,7 @@ if(!isset($_POST)){ // error
       'status'=>'checkphone',
       'number'=>getNumber($_POST['number']),
       'country'=>getCountry($_POST['number']),
+      'digit'=>getDigit($_POST['number']),
     ];
   } elseif ($_POST['mode']=='phonesave'){ // create / update
     // sql here ......
