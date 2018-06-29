@@ -23,7 +23,16 @@
         <div class="form-group">
           <label>Number</label>
           <input required name="number" id="number" onkeyup="phonecheck(this.value);" type="number" class="form-control" aria-describedby="notification" placeholder="no. (ex: 08XXX)">
-          <small>ex : 08123xxx , 053xxx, 027xxx, 0963xxx, etc.</small>
+          <small style="color:grey;">
+            seharusnya yg nongol ini :  <br>
+            01xx | +20 (mesir) <br>
+            01xx | +86 (china) <br>
+            02xx | +64 (selandia baru) <br>
+            07,08,09xx | +91 (india) <br>
+            08xx | +62 (indo) <br>
+            09xx | +963 (syria) <br>
+            05xx | +90 (turki) <br>
+          </small>
         </div>
 
         <div class="form-group">

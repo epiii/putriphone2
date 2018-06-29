@@ -45,7 +45,7 @@ function phone_format2($no){
     $e=mysqli_query($conn,$s);
     $n=mysqli_num_rows($e);
 
-    if($n>0){ // data exist
+    if($n>0){ // data is exist
       // loop from table : parameter
       while ($r=mysqli_fetch_assoc($e)) {
         if(strpos($r['param3'],',')!=false){// exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
