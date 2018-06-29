@@ -17,8 +17,14 @@
   //   } return $hp;
   // }
 
-  function phone_format($no){
-      // exit();
+  function pr($par){
+    echo "<pre>";
+      print_r($par);
+    echo"</pre>";
+    exit();
+  }
+
+  function phone_format2($no){
       require 'koneksi.php';
       $no = str_replace(" ","",$no);
       $no = str_replace("-","",$no);
@@ -26,48 +32,55 @@
       $no = str_replace(")","",$no);
       $no = str_replace(".","",$no);
 
-      // $no = 085655009393
-      $_1_dst = substr(trim($no), 1); // 856....
-      $_1_1 = substr(trim($no), 1, 1); // 8
+      // full = 085655009393
+      $_1startNo = substr(trim($no), 1); // 85655009393
+      $_1digitNo = substr($no,1,1); // 8
+      $_2digitNo = substr($no,1,2); // 85
 
-      // ---
       $res=[];
-        $res['number']=$no;
-        $res['country']='unknown';
-      // var_dump($res);
+      $res['number']=$no;
+      // $res['country']='unknown';
 
-      if($_1_1=='8'){ // indonesia : 08xxx -> +62xxx
-        $res=[
-          'number'=>'+62'.$_1_dst,
-          'country'=>'Indonesia'
-        ];
-      }else{ // negara lain : 0236xx -> +236xx
-        $s='SELECT nama,param2 FROM parameter WHERE param1="nomor"';
-        $e=mysqli_query($conn,$s);
-        $n=mysqli_num_rows($e);
+      $s='SELECT nama,param2,param3 FROM parameter WHERE param1="nomor" ORDER BY  CHAR_LENGTH(param3) DESC';
+      $e=mysqli_query($conn,$s);
+      $n=mysqli_num_rows($e);
 
-        if($n>0){
-          // $arr=[];
-          while ($r=mysqli_fetch_assoc($e)) {
-            $code=substr($r['nama'],1); //  1 / 20 / 880 / ....
-            $pos= strpos($_1_dst,$code); // posisi : 0 / 1 / 2 / ....
-            // $arr[]=[$code,$pos];
-            if(is_numeric($pos) && $pos==0){ // jika ada di awal posisi
-                $res=[
-                  'number'=>'+'.$_1_dst,
-                  'country'=>$r['param2']
-                ];
+      if($n>0){ // data exist
+        // loop from table : parameter
+        while ($r=mysqli_fetch_assoc($e)) {
+          if(strpos($r['param3'],',')!=false){// exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
+            $param3s=explode(',',$r['param3']);
+            foreach ($param3s as $param3) {
+              if($param3==$_1digitNo || $param3==$_2digitNo){
+                $prefix = $r['nama']; // +91
+                $country = $r['param2']; // india
                 break;
+              }
+            } // end of foreach
+          }else{ // not contain (,) / only 1 digit (ex : indonesia : 8)
+            if($param3==$_1digitNo){
+              $prefix = $r['nama']; // +62
+              $country = $r['param2']; // indonesia
+              break;
             }
-          }
-        }
-      }
+          } // end of else
+        } // end of while
+
+        // store value to array
+        $res=[
+          'number'=>$prefix.$_1startNo,
+          'country'=>is_null($country)?'unknown':$country,
+        ];
+      } // end of if
       return $res;
   }
 
-  function pr($par){
-    echo "<pre>";
-      print_r($par);
-    echo"</pre>";
-    exit();
-  }
+function getCountry($no){
+  $country = phone_format2($no);
+  return $country['country'];
+}
+
+function getNumber($no){
+  $number = phone_format2($no);
+  return $number['number'];
+}
