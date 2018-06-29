@@ -51,7 +51,7 @@ function phone_format2($no){
           foreach ($param3s as $param3) {
             if($param3==$_1digitNo || $param3==$_2digitNo){
               $digit = $r['param4']; // 10
-              $prefixInter = $r['nama']; // +62
+              $prefixInter = $r['nama']; // +91
               $prefixLocal = $r['param3']; // 7,8,90,...
               $country = $r['param2']; // india
               break 2; // break from "foreach & while" loop
