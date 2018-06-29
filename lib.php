@@ -38,15 +38,15 @@ function phone_format2($no){
       // loop from table : parameter
       $arr=[];
       while ($r=mysqli_fetch_assoc($e)) {
-        if(strpos($r['param3'],',')==false){// exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
+        if(strpos($r['param3'],',')==false){ // not contain (,) / only 1 digit (ex : indonesia : 8)
           if($r['param3']==$_1digitNo){
             $digit = $r['param4']; // 9,10,11
             $prefixInter = $r['nama']; // +62
             $prefixLocal = $r['param3']; // 08
             $country = $r['param2']; // indonesia
-            break ; // break from "while" loop
+            break ; // exit from "while" loop
           }
-        } else { // not contain (,) / only 1 digit (ex : indonesia : 8)
+        } else { // exist (,) / more than 1 digit (ex : india : 7,8,90,dst..)
           $param3s=explode(',',$r['param3']);
           foreach ($param3s as $param3) {
             if($param3==$_1digitNo || $param3==$_2digitNo){
@@ -54,7 +54,7 @@ function phone_format2($no){
               $prefixInter = $r['nama']; // +91
               $prefixLocal = $r['param3']; // 7,8,90,...
               $country = $r['param2']; // india
-              break 2; // break from "foreach & while" loop
+              break 2; // exit from "foreach & while" loop
             } // end of if
           } // end of foreach
         } // end of else
