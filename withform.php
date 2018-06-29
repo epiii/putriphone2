@@ -15,8 +15,6 @@
 
   <body>
     <br>
-    <br>
-    <br>
     <div class="container">
       <form onsubmit="saveform();return false;">
 
@@ -25,14 +23,14 @@
           <input required name="number" min="0" max="12" id="number" onkeyup="phonecheck(this.value);" type="number" class="form-control" aria-describedby="notification" placeholder="no. (ex: 08XXX)">
           <small style="color:grey;">
             seharusnya yg nongol ini :  <br>
-            01xx | digit 10 | +20 | (mesir) <br>
-            01xx | digit 11 | +86 | (china) <br>
-            01xx | digit 9 | +60 | (malaysia) <br>
-            02xx | digit 12 | +64 | (selandia baru) <br>
-            05xx | digit 11 | +90 | (turki) <br>
-            07,08,09xx | digit 10 | +91 | (india) <br>
-            08xx | digit 9,10,11 | +62 | (indo) <br>
-            09xx | digit 9 | +963 | (syria) <br>
+            01xx |  10 digit | +20 | (mesir) <br>
+            01xx |  11 digit | +86 | (china) <br>
+            01xx |  9 digit | +60 | (malaysia) <br>
+            02xx |  12 digit | +64 | (selandia baru) <br>
+            05xx |  11 digit | +90 | (turki) <br>
+            07,08,09xx |  10 digit | +91 | (india) <br>
+            08xx |  9,10,11 digit | +62 | (indo) <br>
+            09xx |  9 digit | +963 | (syria) <br>
           </small>
         </div>
 
